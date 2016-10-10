@@ -68,6 +68,14 @@ def mlParams(X, labels, W=None):
 
     # TODO: fill in the code to compute mu and sigma!
     # ==========================
+    #Compute the mean
+    #There are five classes
+    #And two features
+
+    #Computation of the covariance matrix
+ 
+        
+    
     
     # ==========================
 
@@ -86,6 +94,7 @@ def classifyBayes(X, prior, mu, sigma):
 
     # TODO: fill in the code to compute the log posterior logProb!
     # ==========================
+
     
     # ==========================
     
