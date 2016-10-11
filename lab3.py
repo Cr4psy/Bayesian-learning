@@ -35,7 +35,7 @@ import math
 def computePrior(labels, W=None):
     Npts = labels.shape[0]
     if W is None:
-        W = np.ones((Npts,1))/Npts
+        W = np.ones((Npts,1))/float(Npts)
     else:
         assert(W.shape[0] == Npts)
     classes = np.unique(labels)
@@ -45,10 +45,11 @@ def computePrior(labels, W=None):
 
     # TODO: compute the values of prior for each class!
     # ==========================
+    print W
     for i in range(Npts):
         for j in range(Nclasses):
             if classes[j]==labels[i]:
-                prior[j]+=(float(1)/Npts)
+                prior[j]+=W[i]
 
 
     #print "Prior : ", prior   
@@ -169,8 +170,8 @@ class BayesClassifier(object):
 
 X, labels = genBlobs(centers=5)
 mu, sigma = mlParams(X,labels)
-plotGaussian(X,labels,mu,sigma)
-#prior = computePrior(labels)
+#plotGaussian(X,labels,mu,sigma)
+prior = computePrior(labels)
 #print classifyBayes(X, prior, mu, sigma)
 #print labels
 # Call the `testClassifier` and `plotBoundary` functions for this part.
