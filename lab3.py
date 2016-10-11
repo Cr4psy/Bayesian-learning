@@ -21,6 +21,7 @@ from scipy import misc
 from imp import reload
 from labfuns import *
 import random
+import math
 
 
 # ## Bayes classifier functions to implement
@@ -50,7 +51,7 @@ def computePrior(labels, W=None):
                 prior[j]+=(float(1)/Npts)
 
 
-    print "Prior : ", prior   
+    #print "Prior : ", prior   
     # ==========================
 
     return prior
@@ -102,8 +103,8 @@ def mlParams(X, labels, W=None):
         for k in range(Ndims):
             sigma[j,k,k]=sigma[j,k,k]/Nk[j]
 
-    print "Mean :", mu            
-    print "Sigma :", sigma    
+    #print "Mean :", mu            
+    #print "Sigma :", sigma    
    
     # ==========================
 
@@ -119,11 +120,21 @@ def classifyBayes(X, prior, mu, sigma):
     Npts = X.shape[0]
     Nclasses,Ndims = np.shape(mu)
     logProb = np.zeros((Nclasses, Npts))
-
+    middleTerm = 0.0
     # TODO: fill in the code to compute the log posterior logProb!
     # ==========================
+    for j in range(Nclasses):#Each classes
+        for i in range(Npts):#Through all the points
+            middleTerm = 0.0
+            for k in range(Ndims): #Compute for each class, x²*Sigma
+                middleTerm+=((X[i,k]**2)*sigma[j,k,k])
+                
+            logProb[j,i]=(-0.5*math.log(np.linalg.norm(sigma[j]))) \
+                          +(-0.5*middleTerm) \
+                          +(math.log(prior[j]))
+            
+    #print logProb
 
-    
     # ==========================
     
     # one possible way of finding max a-posteriori once
@@ -159,8 +170,9 @@ class BayesClassifier(object):
 X, labels = genBlobs(centers=5)
 mu, sigma = mlParams(X,labels)
 #plotGaussian(X,labels,mu,sigma)
-computePrior(labels)
-
+prior = computePrior(labels)
+print classifyBayes(X, prior, mu, sigma)
+print labels
 # Call the `testClassifier` and `plotBoundary` functions for this part.
 
 
