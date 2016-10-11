@@ -45,7 +45,6 @@ def computePrior(labels, W=None):
 
     # TODO: compute the values of prior for each class!
     # ==========================
-    print W
     for i in range(Npts):
         for j in range(Nclasses):
             if classes[j]==labels[i]:
@@ -209,20 +208,37 @@ def trainBoost(base_classifier, X, labels, T=10):
     # The weights for the first iteration
     wCur = np.ones((Npts,1))/float(Npts)
 
+
+    
     for i_iter in range(0, T):
+                
         # a new classifier can be trained like this, given the current weights
         classifiers.append(base_classifier.trainClassifier(X, labels, wCur))
 
         # do classification for each point
-        vote = classifiers[-1].classify(X)
+        vote = classifiers[-1].classify(X)#[-1] Last item of the list
 
         # TODO: Fill in the rest, construct the alphas etc.
         # ==========================
+        for i in range(Npts):
+            alpha = 0
+            error = 0
+            delta = 0
+            if vote[i]==labels[i]:
+                delta=1
+
+            error += wCur[i]*(1-delta)
+
+        alpha = 0.5*(math.log(1-error)-math.log(error))
+        alphas.append(alpha) # you will need to append the new alpha
+
+        #TO CONTINUE : Do point 5.3.4
         
-        # alphas.append(alpha) # you will need to append the new alpha
         # ==========================
         
     return classifiers, alphas
+
+#trainBoost(BayesClassifier(), X, labels)
 
 # in:       X - N x d matrix of N data points
 # classifiers - (maximum) length T Python list of trained classifiers as above
