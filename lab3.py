@@ -66,9 +66,9 @@ def mlParams(X, labels, W=None):
     Npts,Ndims = np.shape(X)
     classes = np.unique(labels)
     Nclasses = np.size(classes)
-    Nk = np.zeros((Nclasses,1))
+    Nk = np.zeros((Nclasses,1))#Nb in each class (when not weighted)
     
-    if W is None:
+    if W is None:#Set to one all the weight if no indication
         W = np.ones((Npts,1))/float(Npts)
 
     mu = np.zeros((Nclasses,Ndims))
@@ -82,9 +82,9 @@ def mlParams(X, labels, W=None):
     for i in range(Npts):#Go through all the points
         for j in range(Nclasses):#Check for all classes
             if labels[i]==classes[j]:#Find the class corresponding to the label
-                Nk[j]+=1#Nb of data in each class
+                Nk[j]+=W[i]#Nb of data in each class
                 for k in range(Ndims):#For each features
-                    mu[j,k]+=X[i,k]
+                    mu[j,k]+=W[i]*X[i,k]
                     
     #Divide by Nk to compute the mean
     for j in range(Nclasses):
@@ -96,7 +96,7 @@ def mlParams(X, labels, W=None):
         for j in range(Nclasses):#Check for all classes Nc
             if labels[i]==classes[j]:#Find the class corresponding to the label
                 for k in range(Ndims):#For each features f
-                    sigma[j,k,k]+=(X[i,k]-mu[j,k])**2
+                    sigma[j,k,k]+=W[i]*(X[i,k]-mu[j,k])**2
   
     #Divide by Nk to compute the variance
     for j in range(Nclasses):
@@ -104,8 +104,8 @@ def mlParams(X, labels, W=None):
             sigma[j,k,k]=sigma[j,k,k]/Nk[j]
 
     #print "Mean :", mu            
-    #print "Sigma :", sigma    
-   
+    #print "Sigma :", sigma
+    #print "Nk : ", Nk
     # ==========================
 
     return mu, sigma
@@ -133,7 +133,7 @@ def classifyBayes(X, prior, mu, sigma):
                           +(-0.5*middleTerm) \
                           +(math.log(prior[j]))
             
-    #print logProb
+    #print "log Posterior : ", logProb
 
     # ==========================
     
@@ -169,10 +169,10 @@ class BayesClassifier(object):
 
 X, labels = genBlobs(centers=5)
 mu, sigma = mlParams(X,labels)
-#plotGaussian(X,labels,mu,sigma)
-prior = computePrior(labels)
-print classifyBayes(X, prior, mu, sigma)
-print labels
+plotGaussian(X,labels,mu,sigma)
+#prior = computePrior(labels)
+#print classifyBayes(X, prior, mu, sigma)
+#print labels
 # Call the `testClassifier` and `plotBoundary` functions for this part.
 
 
