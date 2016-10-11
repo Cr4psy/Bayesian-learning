@@ -59,7 +59,8 @@ def mlParams(X, labels, W=None):
     Npts,Ndims = np.shape(X)
     classes = np.unique(labels)
     Nclasses = np.size(classes)
-
+    Nk = np.zeros((Nclasses,1))
+    
     if W is None:
         W = np.ones((Npts,1))/float(Npts)
 
@@ -69,14 +70,35 @@ def mlParams(X, labels, W=None):
     # TODO: fill in the code to compute mu and sigma!
     # ==========================
     #Compute the mean
-    #There are five classes
-    #And two features
-
+    #Five different classes
+    #Two features
+    for i in range(Npts):#Go through all the points
+        for j in range(Nclasses):#Check for all classes
+            if labels[i]==classes[j]:#Find the class corresponding to the label
+                Nk[j]+=1#Nb of data in each class
+                for k in range(Ndims):#For each features
+                    mu[j,k]+=X[i,k]
+                    
+    #Divide by Nk to compute the mean
+    for j in range(Nclasses):
+        for k in range(Ndims):
+            mu[j,k]=mu[j,k]/Nk[j]  
+    
     #Computation of the covariance matrix
- 
-        
-    
-    
+    for i in range(Npts):#Go through all points N
+        for j in range(Nclasses):#Check for all classes Nc
+            if labels[i]==classes[j]:#Find the class corresponding to the label
+                for k in range(Ndims):#For each features f
+                    sigma[j,k,k]+=(X[i,k]-mu[j,k])**2
+  
+    #Divide by Nk to compute the variance
+    for j in range(Nclasses):
+        for k in range(Ndims):
+            sigma[j,k,k]=sigma[j,k,k]/Nk[j]
+
+    print "Mean :", mu            
+    print "Sigma :", sigma    
+   
     # ==========================
 
     return mu, sigma
