@@ -273,6 +273,10 @@ def classifyBoost(X, classifiers, alphas, Nclasses):
         # here we can do it by filling in the votes vector with weighted votes
         # ==========================
         for i in range(Ncomps):
+            ans = classifiers[i].classify(X)
+            for j in range(Npts):
+                votes[j,ans[j]]+=alphas[i]
+        #print "Boom beach",np.argmax(votes, axis=1)
             
         # ==========================
 
@@ -303,9 +307,22 @@ class BoostClassifier(object):
 
 # ## Run some experiments
 # 
+
+print "Normal"
+testClassifier(BayesClassifier(), dataset='iris', split=0.7)
+
+
+
+#testClassifier(BayesClassifier(), dataset='vowel', split=0.7)
+
+
+
+plotBoundary(BayesClassifier(), dataset='iris',split=0.7)
+
+
 # Call the `testClassifier` and `plotBoundary` functions for this part.
 
-
+print "Boosted"
 testClassifier(BoostClassifier(BayesClassifier(), T=10), dataset='iris',split=0.7)
 
 
@@ -314,7 +331,9 @@ testClassifier(BoostClassifier(BayesClassifier(), T=10), dataset='iris',split=0.
 
 
 
-#plotBoundary(BoostClassifier(BayesClassifier()), dataset='iris',split=0.7)
+plotBoundary(BoostClassifier(BayesClassifier()), dataset='iris',split=0.7)
+
+
 
 
 # Now repeat the steps with a decision tree classifier.
