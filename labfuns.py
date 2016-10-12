@@ -14,7 +14,7 @@ from sklearn import decomposition, tree
 
 def plot_cov_ellipse(cov, pos, nstd=2, ax=None, **kwargs):
     """
-    Plots an `nstd` sigma error ellipse based on the specified covariance
+    Plots an `nstd` sigma error ellipse basednp random seed on the specified covariance
     matrix (`cov`). Additional keyword arguments are passed on to the
     ellipse patch artist.
 
@@ -60,7 +60,7 @@ def trteSplit(X,y,pcSplit,seed=None):
     Ndata = X.shape[0]
     Ntr = int(np.rint(Ndata*pcSplit))
     Nte = Ndata-Ntr
-    np.random.seed(seed)    
+    np.random.seed(seed)
     idx = np.random.permutation(Ndata)
     trIdx = idx[:Ntr]
     teIdx = idx[Ntr:]
@@ -84,6 +84,7 @@ def trteSplitEven(X,y,pcSplit,seed=None):
     yTr = np.zeros((0,),dtype=int)
     trIdx = np.zeros((0,),dtype=int)
     teIdx = np.zeros((0,),dtype=int)
+    #seed = rnd.randint(0, 10000)
     np.random.seed(seed)
     for label in labels:
         classIdx = np.where(y==label)[0]
@@ -122,7 +123,7 @@ def fetchDataset(dataset='iris'):
         y = genfromtxt('vowelY.txt', delimiter=',',dtype=np.int)
         pcadim = 0
     else:
-        print("Please specify a dataset!")
+        print("Please spe1cify a dataset!")
         X = np.zeros(0)
         y = np.zeros(0)
         pcadim = 0
@@ -181,7 +182,7 @@ def testClassifier(classifier, dataset='iris', dim=0, split=0.7, ntrials=100):
 
     for trial in range(ntrials):
 
-        xTr,yTr,xTe,yTe,trIdx,teIdx = trteSplitEven(X,y,split,trial)
+        xTr,yTr,xTe,yTe,trIdx,teIdx = trteSplitEven(X,y,split)
 
         # Do PCA replace default value if user provides it
         if dim > 0:
@@ -214,7 +215,22 @@ def testClassifier(classifier, dataset='iris', dim=0, split=0.7, ntrials=100):
 def plotBoundary(classifier, dataset='iris', split=0.7):
 
     X,y,pcadim = fetchDataset(dataset)
-    xTr,yTr,xTe,yTe,trIdx,teIdx = trteSplitEven(X,y,split,1)
+    """
+    labels = np.unique(y)
+    Ncolors = len(labels)
+    xx = np.arange(Ncolors)
+    ys = [i+xx+(i*xx)**2 for i in range(Ncolors)]
+    colors = cm.rainbow(np.linspace(0, 1, len(ys)))
+    c = 1.0
+    for label in labels:
+        classIdx = y==label
+        Xclass = X[classIdx,:]
+        plt.scatter(Xclass[:,0],Xclass[:,1],linewidths=1,s=40,color=colors[label],marker='o',alpha=0.75)
+        c += 1.
+
+    plt.show()
+    """
+    xTr,yTr,xTe,yTe,trIdx,teIdx = trteSplitEven(X,y,split)
     classes = np.unique(y)
 
     pca = decomposition.PCA(n_components=2)
@@ -239,7 +255,7 @@ def plotBoundary(classifier, dataset='iris', split=0.7):
             # Predict
             grid[yi,xi] = trained_classifier.classify(np.array([[xx, yy]]))
 
-    
+
     ys = [i+xx+(i*xx)**2 for i in range(len(classes))]
     colormap = cm.rainbow(np.linspace(0, 1, len(ys)))
 
