@@ -126,9 +126,8 @@ def classifyBayes(X, prior, mu, sigma):
     for j in range(Nclasses):#Each classes
         for i in range(Npts):#Through all the points
             middleTerm = 0.0
-            for k in range(Ndims): #Compute for each class, x²*Sigma
-                middleTerm+=((X[i,k]**2)*sigma[j,k,k])
-                
+            for k in range(Ndims): #Compute for each features, x²*Sigma
+                middleTerm+=(((X[i,k]-mu[j,k])**2)*sigma[j,k,k]) ##
             logProb[j,i]=(-0.5*math.log(np.linalg.norm(sigma[j]))) \
                           +(-0.5*middleTerm) \
                           +(math.log(prior[j]))
@@ -204,11 +203,10 @@ def trainBoost(base_classifier, X, labels, T=10):
 
     classifiers = [] # append new classifiers to this list
     alphas = [] # append the vote weight of the classifiers to this list
+    deltas = [] # append the deltas of the classifiers to this list
 
     # The weights for the first iteration
     wCur = np.ones((Npts,1))/float(Npts)
-
-
     
     for i_iter in range(0, T):
                 
@@ -220,20 +218,36 @@ def trainBoost(base_classifier, X, labels, T=10):
 
         # TODO: Fill in the rest, construct the alphas etc.
         # ==========================
+        alpha = 0         
+        error = 0        
         for i in range(Npts):
-            alpha = 0
-            error = 0
-            delta = 0
+   
+            delta = []
             if vote[i]==labels[i]:
-                delta=1
+                delta.append(1)
+            else:
+                delta.append(0)
+            
+            error += wCur[i]*float((1-delta[-1]))
 
-            error += wCur[i]*(1-delta)
 
         alpha = 0.5*(math.log(1-error)-math.log(error))
         alphas.append(alpha) # you will need to append the new alpha
 
-        #TO CONTINUE : Do point 5.3.4
+        deltas.append(delta)
         
+        #Compute weight+1
+        for i in range(Npts):
+            if vote[i] == labels[i]:
+                wCur[i] = wCur[i] * math.exp(-alpha)
+            else:
+                wCur[i] = wCur[i] * math.exp(alpha)
+        
+        # normalize the weight vector
+        sumW = np.sum(wCur)
+        for i in range(Npts):
+            wCur[i] = wCur[i] / sumW
+
         # ==========================
         
     return classifiers, alphas
@@ -258,7 +272,8 @@ def classifyBoost(X, classifiers, alphas, Nclasses):
         # TODO: implement classificiation when we have trained several classifiers!
         # here we can do it by filling in the votes vector with weighted votes
         # ==========================
-        
+        for i in range(Ncomps):
+            
         # ==========================
 
         # one way to compute yPred after accumulating the votes
@@ -291,7 +306,7 @@ class BoostClassifier(object):
 # Call the `testClassifier` and `plotBoundary` functions for this part.
 
 
-#testClassifier(BoostClassifier(BayesClassifier(), T=10), dataset='iris',split=0.7)
+testClassifier(BoostClassifier(BayesClassifier(), T=10), dataset='iris',split=0.7)
 
 
 
