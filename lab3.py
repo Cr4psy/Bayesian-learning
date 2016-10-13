@@ -171,7 +171,7 @@ X, labels = genBlobs(centers=5)
 mu, sigma = mlParams(X,labels)
 #plotGaussian(X,labels,mu,sigma)
 prior = computePrior(labels)
-print classifyBayes(X, prior, mu, sigma)
+#print classifyBayes(X, prior, mu, sigma)
 #print labels
 # Call the `testClassifier` and `plotBoundary` functions for this part.
 
@@ -179,7 +179,7 @@ print classifyBayes(X, prior, mu, sigma)
 #testClassifier(BayesClassifier(), dataset='iris', split=0.7)
 
 
-testClassifier(BayesClassifier(), dataset='iris', split=0.7)
+#testClassifier(BayesClassifier(), dataset='iris', split=0.7)
 
 
 # ## Boosting functions to implement
@@ -307,22 +307,24 @@ class BoostClassifier(object):
 # Call the `testClassifier` and `plotBoundary` functions for this part.
 
 #plotBoundary(BayesClassifier(), dataset='vowel',split=0.7)
+#plotBoundary(BoostClassifier(BayesClassifier(), T=10), dataset='vowel',split=0.7)
 #testClassifier(BayesClassifier(), dataset='vowel', split=0.7)
 #testClassifier(BayesClassifier(), dataset='iris', split=0.7)
 
 #print "Boost classifier using Bayes classifier"
 #testClassifier(BoostClassifier(BayesClassifier(), T=10), dataset='iris',split=0.7)
-plotBoundary(BayesClassifier(), dataset='iris',split=0.7)
+#plotBoundary(BayesClassifier(), dataset='iris',split=0.7)
 
-plotBoundary(BoostClassifier(BayesClassifier()), dataset='iris',split=0.7)
-#testClassifier(BayesClassifier(), dataset='iris', split=0.7)
-testClassifier(BoostClassifier(BayesClassifier(), T=10), dataset='iris',split=0.7)
+#plotBoundary(BoostClassifier(BayesClassifier()), dataset='iris',split=0.7)
+#testClassifier(BayesClassifier(), dataset='vowel', split=0.7)
+#testClassifier(BoostClassifier(BayesClassifier(), T=10), dataset='vowel',split=0.7)
 #testClassifier(DecisionTreeClassifier(), dataset='vowel', split=0.7)
 # Now repeat the steps with a decision tree classifier.
 
 #print "Decision Tree classifier"
 #testClassifier(DecisionTreeClassifier(), dataset='iris', split=0.7)
 #plotBoundary(DecisionTreeClassifier(), dataset='vowel',split=0.7)
+#plotBoundary(BoostClassifier(DecisionTreeClassifier(), T=10), dataset='vowel',split=0.7)
 
 #print "Boost classifier using Decision Tree classifier"
 #testClassifier(BoostClassifier(DecisionTreeClassifier(), T=10), dataset='iris',split=0.7)
